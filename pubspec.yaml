@@ -44,6 +44,7 @@ dependencies:
     provider: ^6.0.2
     rxdart: ^0.27.3
     json_annotation: ^4.4.0
+    number_inc_dec: ^0.8.0
 
 dev_dependencies:
     flutter_test:
