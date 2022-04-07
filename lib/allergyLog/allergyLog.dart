@@ -28,7 +28,7 @@ class AllergyLogScreen extends StatelessWidget {
           var log = snapshot.data!;
           if (log.severity.length <= 0) {
             // set dropdownValue to widget.severity
-            log.severity = "None";
+            log.severity = "Ingen";
           }
           print(log.severity);
 
@@ -47,7 +47,7 @@ class AllergyLogScreen extends StatelessWidget {
                     size: 50,
                   ),
                   const Text(
-                    'Amount of Smudges',
+                    'Nælder',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -73,7 +73,7 @@ class AllergyLogScreen extends StatelessWidget {
                     },
                   ),
                   const Text(
-                    'Itching Severity',
+                    'Kløe',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -112,7 +112,7 @@ class SeverityDropdown extends StatefulWidget {
 }
 
 class _SeverityDropdownState extends State<SeverityDropdown> {
-  String dropdownValue = "None";
+  String dropdownValue = "Ingen";
 
   // set dropdownValue to widget.severity
   @override
@@ -129,6 +129,8 @@ class _SeverityDropdownState extends State<SeverityDropdown> {
   Widget build(BuildContext context) {
     return DropdownButton<String>(
       value: dropdownValue,
+      isExpanded: true,
+      itemHeight: 70,
       alignment: Alignment.center,
       borderRadius: BorderRadius.circular(20),
       dropdownColor: Color.fromARGB(255, 30, 6, 44),
@@ -145,8 +147,12 @@ class _SeverityDropdownState extends State<SeverityDropdown> {
         });
         widget.onSelectParam!(newValue!);
       },
-      items: <String>['None', 'Little', 'Medium', 'Very']
-          .map<DropdownMenuItem<String>>((String value) {
+      items: <String>[
+        'Ingen',
+        'Let/Mild (påvirker ikke dagligdagen)',
+        'Moderat (indvirker på nattesøvnen og/eller dagligdagen',
+        'Voldsom/Svær (umiliggør dagligdagen og indvirker svært på nattesøvnen)'
+      ].map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(value),
