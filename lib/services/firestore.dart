@@ -51,12 +51,23 @@ class FirestoreService {
     return ref.set(data, SetOptions(merge: true));
   }
 
+  /// Reads all documments from the logs collection
+  Future<Log> getCurrentLog() async {
+    var user = AuthService().user!;
+    var ref = _db
+        .collection(user.uid)
+        .doc(DateFormat.yMMMEd().format(DateTime.now().toLocal()));
+    var snapshot = await ref.get();
+    return Log.fromJson(snapshot.data() ?? {});
+  }
+
   /// Updates the current user's report document after completing quiz
   Future<void> updateLog(Log log) {
     var user = AuthService().user!;
     // get current date (Formatted Date)
-    var date = DateFormat.yMMMEd().format(DateTime.now().toLocal());
-    var ref = _db.collection(user.uid).doc(date);
+    var ref = _db
+        .collection(user.uid)
+        .doc(DateFormat.yMMMEd().format(DateTime.now().toLocal()));
 
     var data = {
       'amount': log.amount,

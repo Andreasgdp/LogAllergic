@@ -15,68 +15,80 @@ class AllergyLogScreen extends StatelessWidget {
   // This widget will contain another selector with 3 options [Easy, Medium, Hard]
   @override
   Widget build(BuildContext context) {
-    int _counter = 0;
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Log Allergy'),
-      ),
-      // Counter widget with buttons to increment or decrement the counter.
-      body: Container(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            const FlutterLogo(
-              size: 50,
+    return FutureBuilder<Log>(
+      future: FirestoreService().getCurrentLog(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const LoadingScreen();
+        } else if (snapshot.hasError) {
+          return Center(
+            child: ErrorMessage(message: snapshot.error.toString()),
+          );
+        } else if (snapshot.hasData) {
+          var log = snapshot.data!;
+
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Log Allergy'),
             ),
-            const Text(
-              'Amount of Smudges',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+            // Counter widget with buttons to increment or decrement the counter.
+            body: Container(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  const FlutterLogo(
+                    size: 50,
+                  ),
+                  const Text(
+                    'Amount of Smudges',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  NumberInputPrefabbed.roundedButtons(
+                    controller: TextEditingController(),
+                    initialValue: log.amount,
+                    incDecBgColor: const Color.fromARGB(255, 101, 21, 148),
+                    buttonArrangement: ButtonArrangement.incRightDecLeft,
+                    onIncrement: (num newlyIncrementedValue) {
+                      log.amount = newlyIncrementedValue;
+                      FirestoreService().updateLog(log);
+                    },
+                    onDecrement: (num newlyDecrementedValue) {
+                      log.amount = newlyDecrementedValue;
+                      FirestoreService().updateLog(log);
+                    },
+                    onChanged: (num newlyChangedValue) {
+                      log.amount = newlyChangedValue;
+                      FirestoreService().updateLog(log);
+                    },
+                  ),
+                  const Text(
+                    'Itching Severity',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  MyStatefulDropdown(onSelectParam: (String param) {
+                    log.severity = param;
+                    FirestoreService().updateLog(log);
+                  }),
+                  // btn to save the data
+                ],
               ),
-              textAlign: TextAlign.center,
             ),
-            NumberInputPrefabbed.roundedButtons(
-              controller: TextEditingController(),
-              incDecBgColor: const Color.fromARGB(255, 101, 21, 148),
-              buttonArrangement: ButtonArrangement.incRightDecLeft,
-              onIncrement: (num newlyIncrementedValue) {
-                var log = Log(
-                  amount: newlyIncrementedValue,
-                  severity: '',
-                );
-                FirestoreService().updateLog(log);
-              },
-              onDecrement: (num newlyDecrementedValue) {
-                var log = Log(
-                  amount: newlyDecrementedValue,
-                  severity: '',
-                );
-                FirestoreService().updateLog(log);
-              },
-            ),
-            const Text(
-              'Itching Severity',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            MyStatefulDropdown(onSelectParam: (String param) {
-              var log = Log(
-                amount: 0,
-                severity: param,
-              );
-              FirestoreService().updateLog(log);
-            }),
-            // btn to save the data
-          ],
-        ),
-      ),
-      bottomNavigationBar: const BottomNavBar(),
+            bottomNavigationBar: const BottomNavBar(),
+          );
+        } else {
+          return const Text('No topics found in Firestore. Check database');
+        }
+      },
     );
   }
 }
