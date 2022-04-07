@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:log_allergy/services/firestore.dart';
 import 'package:log_allergy/shared/shared.dart';
 import 'package:number_inc_dec/number_inc_dec.dart';
+
+import '../services/models.dart';
 
 class AllergyLogScreen extends StatelessWidget {
   const AllergyLogScreen({Key? key}) : super(key: key);
@@ -28,25 +31,48 @@ class AllergyLogScreen extends StatelessWidget {
               size: 50,
             ),
             const Text(
-              'Amount of marks',
+              'Amount of Smudges',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,
             ),
-            NumberInputWithIncrementDecrement(
+            NumberInputPrefabbed.roundedButtons(
               controller: TextEditingController(),
+              incDecBgColor: const Color.fromARGB(255, 101, 21, 148),
+              buttonArrangement: ButtonArrangement.incRightDecLeft,
+              onIncrement: (num newlyIncrementedValue) {
+                var log = Log(
+                  amount: newlyIncrementedValue,
+                  severity: '',
+                );
+                FirestoreService().updateLog(log);
+              },
+              onDecrement: (num newlyDecrementedValue) {
+                var log = Log(
+                  amount: newlyDecrementedValue,
+                  severity: '',
+                );
+                FirestoreService().updateLog(log);
+              },
             ),
             const Text(
-              'Itching difficulty',
+              'Itching Severity',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,
             ),
-            const MyStatefulDropdown(),
+            MyStatefulDropdown(onSelectParam: (String param) {
+              var log = Log(
+                amount: 0,
+                severity: param,
+              );
+              FirestoreService().updateLog(log);
+            }),
+            // btn to save the data
           ],
         ),
       ),
@@ -56,8 +82,9 @@ class AllergyLogScreen extends StatelessWidget {
 }
 
 class MyStatefulDropdown extends StatefulWidget {
-  const MyStatefulDropdown({Key? key}) : super(key: key);
+  MyStatefulDropdown({Key? key, this.onSelectParam}) : super(key: key);
 
+  final Function(String)? onSelectParam;
   @override
   State<MyStatefulDropdown> createState() => _MyStatefulDropdownState();
 }
@@ -81,6 +108,7 @@ class _MyStatefulDropdownState extends State<MyStatefulDropdown> {
         setState(() {
           dropdownValue = newValue!;
         });
+        widget.onSelectParam!(newValue!);
       },
       items: <String>['None', 'Little', 'Medium', 'Very']
           .map<DropdownMenuItem<String>>((String value) {

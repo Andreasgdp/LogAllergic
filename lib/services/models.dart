@@ -14,6 +14,15 @@ class Option {
 }
 
 @JsonSerializable()
+class Log {
+  num amount;
+  String severity;
+  Log({this.amount = 0, this.severity = ''});
+  factory Log.fromJson(Map<String, dynamic> json) => _$LogFromJson(json);
+  Map<String, dynamic> toJson() => _$LogToJson(this);
+}
+
+@JsonSerializable()
 class Question {
   String text;
   List<Option> options;

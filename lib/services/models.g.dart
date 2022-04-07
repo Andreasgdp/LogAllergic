@@ -18,6 +18,16 @@ Map<String, dynamic> _$OptionToJson(Option instance) => <String, dynamic>{
       'correct': instance.correct,
     };
 
+Log _$LogFromJson(Map<String, dynamic> json) => Log(
+      amount: json['amount'] as num? ?? 0,
+      severity: json['severity'] as String? ?? '',
+    );
+
+Map<String, dynamic> _$LogToJson(Log instance) => <String, dynamic>{
+      'amount': instance.amount,
+      'severity': instance.severity,
+    };
+
 Question _$QuestionFromJson(Map<String, dynamic> json) => Question(
       options: (json['options'] as List<dynamic>?)
               ?.map((e) => Option.fromJson(e as Map<String, dynamic>))

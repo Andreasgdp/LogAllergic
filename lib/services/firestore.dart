@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:log_allergy/services/models.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:log_allergy/services/auth.dart';
+import 'package:intl/intl.dart';
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -45,6 +46,21 @@ class FirestoreService {
       'topics': {
         quiz.topic: FieldValue.arrayUnion([quiz.id])
       }
+    };
+
+    return ref.set(data, SetOptions(merge: true));
+  }
+
+  /// Updates the current user's report document after completing quiz
+  Future<void> updateLog(Log log) {
+    var user = AuthService().user!;
+    // get current date (Formatted Date)
+    var date = DateFormat.yMMMEd().format(DateTime.now().toLocal());
+    var ref = _db.collection(user.uid).doc(date);
+
+    var data = {
+      'amount': log.amount,
+      'severity': log.severity,
     };
 
     return ref.set(data, SetOptions(merge: true));
