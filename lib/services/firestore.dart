@@ -61,7 +61,7 @@ class FirestoreService {
     return Log.fromJson(snapshot.data() ?? {});
   }
 
-  /// Updates the current user's report document after completing quiz
+  /// Updates the current user's log document
   Future<void> updateLog(Log log) {
     var user = AuthService().user!;
     // get current date (Formatted Date)

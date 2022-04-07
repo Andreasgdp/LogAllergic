@@ -26,6 +26,11 @@ class AllergyLogScreen extends StatelessWidget {
           );
         } else if (snapshot.hasData) {
           var log = snapshot.data!;
+          if (log.severity.length <= 0) {
+            // set dropdownValue to widget.severity
+            log.severity = "None";
+          }
+          print(log.severity);
 
           return Scaffold(
             appBar: AppBar(
@@ -75,10 +80,12 @@ class AllergyLogScreen extends StatelessWidget {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  MyStatefulDropdown(onSelectParam: (String param) {
-                    log.severity = param;
-                    FirestoreService().updateLog(log);
-                  }),
+                  SeverityDropdown(
+                      onSelectParam: (String param) {
+                        log.severity = param;
+                        FirestoreService().updateLog(log);
+                      },
+                      severity: log.severity),
                   // btn to save the data
                 ],
               ),
@@ -93,22 +100,38 @@ class AllergyLogScreen extends StatelessWidget {
   }
 }
 
-class MyStatefulDropdown extends StatefulWidget {
-  MyStatefulDropdown({Key? key, this.onSelectParam}) : super(key: key);
-
+class SeverityDropdown extends StatefulWidget {
+  final String severity;
   final Function(String)? onSelectParam;
+
+  const SeverityDropdown({Key? key, this.onSelectParam, required this.severity})
+      : super(key: key);
+
   @override
-  State<MyStatefulDropdown> createState() => _MyStatefulDropdownState();
+  State<SeverityDropdown> createState() => _SeverityDropdownState();
 }
 
-class _MyStatefulDropdownState extends State<MyStatefulDropdown> {
-  String dropdownValue = 'None';
+class _SeverityDropdownState extends State<SeverityDropdown> {
+  String dropdownValue = "None";
+
+  // set dropdownValue to widget.severity
+  @override
+  void initState() {
+    super.initState();
+    // if length of widget.severity is greater than 0
+    if (widget.severity.length > 0) {
+      // set dropdownValue to widget.severity
+      dropdownValue = widget.severity;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return DropdownButton<String>(
       value: dropdownValue,
       alignment: Alignment.center,
+      borderRadius: BorderRadius.circular(20),
+      dropdownColor: Color.fromARGB(255, 30, 6, 44),
       icon: const Icon(Icons.arrow_downward),
       elevation: 16,
       style: const TextStyle(color: Colors.deepPurple),
