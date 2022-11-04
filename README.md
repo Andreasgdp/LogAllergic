@@ -1,5 +1,6 @@
 # LogAllergic
-App for tracking allergy (more specifically nettle rash)
+App for tracking allergy (more specifically nettle rash). The app allows for logging amount of nettle rash and also the severity of the itching.
+All data logged is being stored in a Firestore database.
 
 ![billede](https://user-images.githubusercontent.com/39928082/199930432-b6d50f59-41ad-498b-b609-1679803ff601.png)
 
