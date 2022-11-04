@@ -1,6 +1,8 @@
 # LogAllergic
 App for tracking allergy (more specifically nettle rash)
 
+![billede](https://user-images.githubusercontent.com/39928082/199930432-b6d50f59-41ad-498b-b609-1679803ff601.png)
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
